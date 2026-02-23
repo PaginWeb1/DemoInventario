@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventario App</title>
+<link rel="stylesheet" href="css/styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<button onclick="cerrarSesion()" class="logout-btn">Cerrar Sesión</button>
+<h2>Inventario</h2>
+
+<div class="form">
+    <input type="text" id="nombre" placeholder="Nombre producto">
+    <input type="number" id="cantidad" placeholder="Cantidad">
+    <input type="number" id="precioCompra" placeholder="Precio Compra">
+    <input type="number" id="precioVenta" placeholder="Precio Venta">
+    <button onclick="agregarProducto()" class="btn-agregar">+</button>
+    <button onclick="exportarPDF()" class="btn-pdf">📄 PDF</button>
+</div>
+
+<div id="listaProductos" class="lista-productos"></div>
+
+<div class="nav">
+    <button onclick="location.href='dashboard.html'">🏠</button>
+    <button onclick="location.href='inventario.html'">📦</button>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/inventario.js"></script>
+</body>
+</html>
