@@ -1,33 +1,21 @@
-// Protege la página
-if(!localStorage.getItem("negocio")) {
+let usuarioActivo = localStorage.getItem("usuarioActivo");
+if(!usuarioActivo){
     window.location.href = "index.html";
+} else {
+    document.getElementById("nombreNegocio").textContent = usuarioActivo;
+    document.getElementById("nombreNegocioInv")?.textContent = usuarioActivo;
 }
 
-const negocio = localStorage.getItem("negocio");
-document.getElementById("nombreNegocio").innerText = negocio;
+let productos = JSON.parse(localStorage.getItem("productos_" + usuarioActivo)) || [];
 
-// Inventario del negocio
-let productos = JSON.parse(localStorage.getItem(`productos_${negocio}`)) || [];
+function actualizarDashboard(){
+    let totalProductos = productos.length;
+    let totalValorizado = productos.reduce((acc, p) => acc + p.cantidad * p.precioVenta, 0);
+    let ganancia = productos.reduce((acc, p) => acc + (p.precioVenta - p.precioCompra) * p.cantidad, 0);
 
-// Productos de ejemplo para Doctor Simi
-if(negocio === "Doctor Simi" && productos.length === 0) {
-    productos = [
-        {nombre:"Jarabe para la tos", cantidad:10, precioCompra:2000, precioVenta:3500},
-        {nombre:"Vitamina C", cantidad:8, precioCompra:1500, precioVenta:2500},
-        {nombre:"Termómetro digital", cantidad:5, precioCompra:5000, precioVenta:8000}
-    ];
-    localStorage.setItem(`productos_${negocio}`, JSON.stringify(productos));
+    document.getElementById("totalProductos").textContent = totalProductos;
+    document.getElementById("totalValorizado").textContent = "$" + totalValorizado;
+    document.getElementById("ganancia").textContent = "$" + ganancia;
 }
 
-document.getElementById("totalProductos").innerText = productos.length;
-
-let totalValorizado = 0;
-let ganancia = 0;
-
-productos.forEach(p => {
-    totalValorizado += p.cantidad * p.precioVenta;
-    ganancia += (p.precioVenta - p.precioCompra) * p.cantidad;
-});
-
-document.getElementById("totalValorizado").innerText = "$" + totalValorizado;
-document.getElementById("ganancia").innerText = "$" + ganancia;
+actualizarDashboard();
