@@ -1,35 +1,17 @@
-// Protege la página
-if(!localStorage.getItem("negocio")) {
-    window.location.href = "index.html";
+let productos = JSON.parse(localStorage.getItem("productos_" + usuarioActivo)) || [];
+
+function guardar(){
+    localStorage.setItem("productos_" + usuarioActivo, JSON.stringify(productos));
+    actualizarDashboard();
 }
 
-const negocio = localStorage.getItem("negocio");
-let productos = JSON.parse(localStorage.getItem(`productos_${negocio}`)) || [];
-
-// Productos de ejemplo para Doctor Simi
-if(negocio === "Doctor Simi" && productos.length === 0) {
-    productos = [
-        {nombre:"Jarabe para la tos", cantidad:10, precioCompra:2000, precioVenta:3500},
-        {nombre:"Vitamina C", cantidad:8, precioCompra:1500, precioVenta:2500},
-        {nombre:"Termómetro digital", cantidad:5, precioCompra:5000, precioVenta:8000}
-    ];
-    localStorage.setItem(`productos_${negocio}`, JSON.stringify(productos));
-}
-
-function guardar() {
-    localStorage.setItem(`productos_${negocio}`, JSON.stringify(productos));
-}
-
-function agregarProducto() {
+function agregarProducto(){
     const nombre = document.getElementById("nombre").value.trim();
     const cantidad = parseInt(document.getElementById("cantidad").value);
-    const precioCompra = parseInt(document.getElementById("precioCompra").value);
-    const precioVenta = parseInt(document.getElementById("precioVenta").value);
+    const precioCompra = parseFloat(document.getElementById("precioCompra").value);
+    const precioVenta = parseFloat(document.getElementById("precioVenta").value);
 
-    if(!nombre || !cantidad || !precioCompra || !precioVenta) {
-        alert("Completa todos los campos");
-        return;
-    }
+    if(!nombre || isNaN(cantidad) || isNaN(precioCompra) || isNaN(precioVenta)) return;
 
     productos.push({nombre, cantidad, precioCompra, precioVenta});
     guardar();
@@ -37,57 +19,95 @@ function agregarProducto() {
     limpiarFormulario();
 }
 
-function eliminarProducto(index) {
-    if(confirm("¿Seguro que deseas eliminar este producto?")) {
-        productos.splice(index, 1);
+function mostrarProductos(){
+    const lista = document.getElementById("listaProductos");
+    lista.innerHTML = "";
+    productos.forEach((p, index) => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+            <p><strong>${p.nombre}</strong></p>
+            <p>Cantidad: <span class="${p.cantidad <=5 ? 'stock-bajo':''}">${p.cantidad}</span></p>
+            <p>Compra: $${p.precioCompra}</p>
+            <p>Venta: $${p.precioVenta}</p>
+            <button onclick="editarProducto(${index})">✏️ Editar</button>
+            <button onclick="eliminarProducto(${index})">🗑 Eliminar</button>
+        `;
+        lista.appendChild(div);
+    });
+}
+
+function limpiarFormulario(){
+    document.getElementById("nombre").value="";
+    document.getElementById("cantidad").value="";
+    document.getElementById("precioCompra").value="";
+    document.getElementById("precioVenta").value="";
+}
+
+function eliminarProducto(index){
+    if(confirm("¿Seguro quieres eliminar este producto?")){
+        productos.splice(index,1);
         guardar();
         mostrarProductos();
     }
 }
 
-function mostrarProductos() {
-    const lista = document.getElementById("listaProductos");
-    lista.innerHTML = "";
+function editarProducto(index){
+    const p = productos[index];
+    document.getElementById("nombre").value = p.nombre;
+    document.getElementById("cantidad").value = p.cantidad;
+    document.getElementById("precioCompra").value = p.precioCompra;
+    document.getElementById("precioVenta").value = p.precioVenta;
 
-    productos.forEach((p, index) => {
-        let alerta = "";
-        if(p.cantidad <= 5) {
-            alerta = "<p style='color:red;font-weight:bold;'>⚠ Stock Bajo</p>";
-        }
-
-        lista.innerHTML += `
-            <div class="card">
-                <h3>${p.nombre}</h3>
-                <p>Cantidad: ${p.cantidad}</p>
-                <p>Venta: $${p.precioVenta}</p>
-                ${alerta}
-                <button onclick="eliminarProducto(${index})">Eliminar</button>
-            </div>
-        `;
-    });
+    const btn = document.querySelector(".btn-agregar");
+    btn.textContent = "💾 Guardar";
+    btn.onclick = function(){
+        p.nombre = document.getElementById("nombre").value.trim();
+        p.cantidad = parseInt(document.getElementById("cantidad").value);
+        p.precioCompra = parseFloat(document.getElementById("precioCompra").value);
+        p.precioVenta = parseFloat(document.getElementById("precioVenta").value);
+        guardar();
+        mostrarProductos();
+        limpiarFormulario();
+        btn.textContent = "+";
+        btn.onclick = agregarProducto;
+    };
 }
 
-function limpiarFormulario() {
-    document.getElementById("nombre").value = "";
-    document.getElementById("cantidad").value = "";
-    document.getElementById("precioCompra").value = "";
-    document.getElementById("precioVenta").value = "";
-}
-
-// Exportar PDF
-async function exportarPDF() {
+function exportarPDF(){
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    doc.text(`Reporte de Inventario - ${negocio}`, 10, 10);
-    let y = 20;
+    doc.setFontSize(18);
+    doc.text(`Reporte de Inventario - ${usuarioActivo}`,14,22);
+    doc.setFontSize(12);
+    const fecha = new Date().toLocaleDateString();
+    doc.text(`Fecha: ${fecha}`,14,30);
 
-    productos.forEach(p => {
-        doc.text(`${p.nombre} | Cant: ${p.cantidad} | Venta: $${p.precioVenta}`, 10, y);
-        y += 10;
+    const filas = productos.map(p => [
+        p.nombre,
+        p.cantidad,
+        `$${p.precioCompra}`,
+        `$${p.precioVenta}`,
+        p.cantidad <=5 ? "⚠ Bajo" : ""
+    ]);
+
+    doc.autoTable({
+        head: [['Producto','Cantidad','Compra','Venta','Stock']],
+        body: filas,
+        startY:40,
+        theme:'grid',
+        headStyles:{fillColor:[33,150,243]},
+        styles:{fontSize:10},
+        alternateRowStyles:{fillColor:[240,240,240]}
     });
 
-    doc.save(`inventario_${negocio}.pdf`);
+    let totalValorizado = productos.reduce((acc,p)=>acc+p.cantidad*p.precioVenta,0);
+    let ganancia = productos.reduce((acc,p)=>acc+(p.precioVenta-p.precioCompra)*p.cantidad,0);
+    doc.text(`Total productos: ${productos.length}`,14,doc.lastAutoTable.finalY+10);
+    doc.text(`Total valorizado: $${totalValorizado}`,14,doc.lastAutoTable.finalY+16);
+    doc.text(`Ganancia potencial: $${ganancia}`,14,doc.lastAutoTable.finalY+22);
+
+    doc.save(`inventario_${usuarioActivo}_${fecha}.pdf`);
 }
 
-// Mostrar productos al cargar
 mostrarProductos();
