@@ -1,45 +1,25 @@
-// Usuario de prueba
-const usuarioPrueba = {usuario: "Doctor Simi", clave: "1234"};
-
-// Guardar usuario prueba si no existe
-if(!localStorage.getItem("credenciales")) {
-    localStorage.setItem("credenciales", JSON.stringify([usuarioPrueba]));
-}
+// Usuarios ejemplo con claves
+const usuarios = [
+    {usuario: "Doctor Simi", clave: "simi123"},
+    {usuario: "Farmacia ABC", clave: "abc123"}
+];
 
 function login() {
-    const usuarioInput = document.getElementById("usuario");
-    const claveInput = document.getElementById("clave");
+    const usuario = document.getElementById("usuario").value.trim();
+    const clave = document.getElementById("clave").value.trim();
+    const mensaje = document.getElementById("mensajeError");
 
-    const usuario = usuarioInput.value.trim();
-    const clave = claveInput.value.trim();
+    const usuarioValido = usuarios.find(u => u.usuario === usuario && u.clave === clave);
 
-    if(usuario === "" || clave === "") {
-        alert("Completa todos los campos");
-        return;
-    }
-
-    let usuarios = JSON.parse(localStorage.getItem("credenciales")) || [];
-
-    const encontrado = usuarios.find(u => u.usuario === usuario);
-
-    if(encontrado) {
-        if(encontrado.clave === clave) {
-            localStorage.setItem("negocio", usuario);
-            window.location.href = "dashboard.html";
-        } else {
-            alert("Clave incorrecta");
-        }
-    } else {
-        // Crear nuevo usuario
-        usuarios.push({usuario, clave});
-        localStorage.setItem("credenciales", JSON.stringify(usuarios));
-        localStorage.setItem("negocio", usuario);
+    if(usuarioValido){
+        localStorage.setItem("usuarioActivo", usuarioValido.usuario);
         window.location.href = "dashboard.html";
+    } else {
+        mensaje.textContent = "Usuario o clave incorrecta";
     }
 }
 
-// Cerrar sesión
 function cerrarSesion() {
-    localStorage.removeItem("negocio");
+    localStorage.removeItem("usuarioActivo");
     window.location.href = "index.html";
 }
