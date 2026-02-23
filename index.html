@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inventario App</title>
-<link rel="stylesheet" href="styles.css">
+<title>Inventario App - Login</title>
+<link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="login-body">
 
@@ -13,12 +13,12 @@
     <input type="text" id="usuario" placeholder="Nombre del negocio">
     <input type="password" id="clave" placeholder="Clave de acceso">
     <button id="btnLogin">Ingresar</button>
+    <p id="mensajeError" class="mensaje-error"></p>
 </div>
 
-<script src="auth.js"></script>
+<script src="js/auth.js"></script>
 <script>
-    document.getElementById("btnLogin").addEventListener("click", login);
+document.getElementById("btnLogin").addEventListener("click", login);
 </script>
 </body>
-
 </html>
