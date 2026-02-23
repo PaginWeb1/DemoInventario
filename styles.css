@@ -46,6 +46,11 @@ body {
     background-color: #45a049;
 }
 
+.mensaje-error {
+    color: red;
+    margin-top: 10px;
+}
+
 /* HEADER */
 .header {
     display: flex;
