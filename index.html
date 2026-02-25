@@ -226,10 +226,10 @@ td{
 let productos = JSON.parse(localStorage.getItem("inventarioPro")) || [];
 
 function iniciarSesion(){
-    const usuario = usuario.value.trim();
-    const password = document.getElementById("password").value.trim();
+    const usuarioInput = document.getElementById("usuario").value.trim();
+    const passwordInput = document.getElementById("password").value.trim();
 
-    if(usuario==="admin" && password==="1234"){
+    if(usuarioInput === "admin" && passwordInput === "1234"){
         localStorage.setItem("sesionActiva","true");
         mostrarApp();
     }else{
