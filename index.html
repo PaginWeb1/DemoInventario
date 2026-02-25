@@ -57,9 +57,7 @@ body{
 }
 
 /* APP */
-#app{
-    display:none;
-}
+#app{display:none;}
 
 header{
     background:#0f172a;
@@ -125,20 +123,9 @@ button{
     cursor:pointer;
 }
 
-.btn-primary{
-    background:#2563eb;
-    color:white;
-}
-
-.btn-success{
-    background:#16a34a;
-    color:white;
-}
-
-.btn-danger{
-    background:#ef4444;
-    color:white;
-}
+.btn-primary{background:#2563eb;color:white;}
+.btn-success{background:#16a34a;color:white;}
+.btn-danger{background:#ef4444;color:white;}
 
 .table-container{
     background:white;
@@ -162,36 +149,6 @@ th{
 td{
     padding:12px;
     border-bottom:1px solid #eee;
-}
-
-/* MOBILE */
-@media(max-width:768px){
-    table, thead, tbody, th, td, tr{
-        display:block;
-    }
-
-    thead{display:none;}
-
-    tr{
-        margin-bottom:15px;
-        padding:10px;
-        border-bottom:1px solid #ccc;
-    }
-
-    td{
-        display:flex;
-        justify-content:space-between;
-    }
-
-    td:before{
-        font-weight:600;
-    }
-
-    td:nth-child(1):before{content:"Producto";}
-    td:nth-child(2):before{content:"Cantidad";}
-    td:nth-child(3):before{content:"Precio";}
-    td:nth-child(4):before{content:"Total";}
-    td:nth-child(5):before{content:"Acción";}
 }
 </style>
 </head>
@@ -260,9 +217,10 @@ td{
 <script>
 let productos = JSON.parse(localStorage.getItem("inventarioPro")) || [];
 
+/* LOGIN */
 function iniciarSesion(){
-    const usuario = document.getElementById("usuario").value;
-    const password = document.getElementById("password").value;
+    const usuario = document.getElementById("usuario").value.trim();
+    const password = document.getElementById("password").value.trim();
 
     if(usuario==="admin" && password==="1234"){
         localStorage.setItem("sesionActiva","true");
@@ -286,6 +244,7 @@ if(localStorage.getItem("sesionActiva")==="true"){
     mostrarApp();
 }
 
+/* INVENTARIO */
 function guardar(){
     localStorage.setItem("inventarioPro", JSON.stringify(productos));
 }
@@ -295,18 +254,24 @@ function formatoCLP(valor){
 }
 
 function agregarProducto(){
-    const nombre = document.getElementById("nombre").value.trim();
-    const cantidad = parseInt(document.getElementById("cantidad").value);
-    const precio = parseFloat(document.getElementById("precio").value);
+    const nombreInput = document.getElementById("nombre");
+    const cantidadInput = document.getElementById("cantidad");
+    const precioInput = document.getElementById("precio");
 
-    if(!nombre || cantidad<=0 || precio<=0){
+    const nombre = nombreInput.value.trim();
+    const cantidad = parseInt(cantidadInput.value);
+    const precio = parseFloat(precioInput.value);
+
+    if(!nombre || isNaN(cantidad) || cantidad<=0 || isNaN(precio) || precio<=0){
         alert("Complete los campos correctamente");
         return;
     }
 
     productos.push({nombre,cantidad,precio});
     guardar();
-    limpiar();
+    nombreInput.value="";
+    cantidadInput.value="";
+    precioInput.value="";
     mostrarProductos();
 }
 
@@ -342,20 +307,20 @@ function mostrarProductos(){
     document.getElementById("valorTotal").innerText=formatoCLP(valorTotal);
 }
 
-function limpiar(){
-    nombre.value="";
-    cantidad.value="";
-    precio.value="";
-}
-
-/* EXPORTAR CSV (Excel) */
+/* EXPORTAR CSV */
 function exportarExcel(){
+    if(productos.length===0){
+        alert("No hay productos para exportar");
+        return;
+    }
+
     let csv="Producto,Cantidad,Precio,Total\n";
+
     productos.forEach(p=>{
-        csv+=${p.nombre},${p.cantidad},${p.precio},${p.cantidad*p.precio}\n;
+        csv+=`${p.nombre},${p.cantidad},${p.precio},${p.cantidad*p.precio}\n`;
     });
 
-    let blob=new Blob([csv],{type:"text/csv"});
+    let blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
     let url=URL.createObjectURL(blob);
     let a=document.createElement("a");
     a.href=url;
