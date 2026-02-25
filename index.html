@@ -32,11 +32,6 @@ body{
     width:320px;
 }
 
-.login-box h2{
-    margin-bottom:20px;
-    text-align:center;
-}
-
 .login-box input{
     width:100%;
     padding:12px;
@@ -95,6 +90,11 @@ header button{
     padding:20px;
     border-radius:14px;
     box-shadow:0 8px 20px rgba(0,0,0,0.05);
+    transition:0.3s ease;
+}
+
+.card:hover{
+    transform:translateY(-5px);
 }
 
 .card p{
@@ -104,7 +104,7 @@ header button{
 
 .form-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
     gap:10px;
     margin-bottom:15px;
 }
@@ -126,6 +126,7 @@ button{
 .btn-primary{background:#2563eb;color:white;}
 .btn-success{background:#16a34a;color:white;}
 .btn-danger{background:#ef4444;color:white;}
+.btn-warning{background:#f59e0b;color:white;}
 
 .table-container{
     background:white;
@@ -150,11 +151,14 @@ td{
     padding:12px;
     border-bottom:1px solid #eee;
 }
+
+.stock-bajo{
+    background:#fee2e2;
+}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div class="login-container" id="login">
     <div class="login-box">
         <h2>Inventario Pro</h2>
@@ -164,7 +168,6 @@ td{
     </div>
 </div>
 
-<!-- APP -->
 <div id="app">
 <header>
     <div>Inventario Pro</div>
@@ -188,10 +191,13 @@ td{
     </div>
 </div>
 
+<input type="text" id="buscador" placeholder="Buscar producto..." onkeyup="filtrarProductos()" style="margin-bottom:15px;width:100%;">
+
 <div class="form-grid">
     <input type="text" id="nombre" placeholder="Producto">
     <input type="number" id="cantidad" placeholder="Cantidad">
     <input type="number" id="precio" placeholder="Precio">
+    <input type="number" id="stockMinimo" placeholder="Stock mínimo">
     <button class="btn-primary" onclick="agregarProducto()">Agregar</button>
     <button class="btn-success" onclick="exportarExcel()">Exportar Excel</button>
 </div>
@@ -200,10 +206,12 @@ td{
 <table>
 <thead>
 <tr>
+<th>ID</th>
 <th>Producto</th>
 <th>Cantidad</th>
 <th>Precio</th>
 <th>Total</th>
+<th>Fecha</th>
 <th>Acción</th>
 </tr>
 </thead>
@@ -217,9 +225,8 @@ td{
 <script>
 let productos = JSON.parse(localStorage.getItem("inventarioPro")) || [];
 
-/* LOGIN */
 function iniciarSesion(){
-    const usuario = document.getElementById("usuario").value.trim();
+    const usuario = usuario.value.trim();
     const password = document.getElementById("password").value.trim();
 
     if(usuario==="admin" && password==="1234"){
@@ -244,7 +251,6 @@ if(localStorage.getItem("sesionActiva")==="true"){
     mostrarApp();
 }
 
-/* INVENTARIO */
 function guardar(){
     localStorage.setItem("inventarioPro", JSON.stringify(productos));
 }
@@ -254,31 +260,45 @@ function formatoCLP(valor){
 }
 
 function agregarProducto(){
-    const nombreInput = document.getElementById("nombre");
-    const cantidadInput = document.getElementById("cantidad");
-    const precioInput = document.getElementById("precio");
+    const nombre = nombre.value.trim();
+    const cantidad = parseInt(cantidad.value);
+    const precio = parseFloat(precio.value);
+    const stockMinimo = parseInt(stockMinimo.value);
 
-    const nombre = nombreInput.value.trim();
-    const cantidad = parseInt(cantidadInput.value);
-    const precio = parseFloat(precioInput.value);
-
-    if(!nombre || isNaN(cantidad) || cantidad<=0 || isNaN(precio) || precio<=0){
+    if(!nombre || isNaN(cantidad) || isNaN(precio)){
         alert("Complete los campos correctamente");
         return;
     }
 
-    productos.push({nombre,cantidad,precio});
+    productos.push({
+        id: Date.now(),
+        nombre,
+        cantidad,
+        precio,
+        stockMinimo,
+        fecha: new Date().toLocaleDateString()
+    });
+
     guardar();
-    nombreInput.value="";
-    cantidadInput.value="";
-    precioInput.value="";
+    document.querySelectorAll(".form-grid input").forEach(i=>i.value="");
     mostrarProductos();
 }
 
+function editarProducto(index){
+    let nuevoNombre = prompt("Nuevo nombre", productos[index].nombre);
+    if(nuevoNombre){
+        productos[index].nombre = nuevoNombre;
+        guardar();
+        mostrarProductos();
+    }
+}
+
 function eliminarProducto(index){
-    productos.splice(index,1);
-    guardar();
-    mostrarProductos();
+    if(confirm("¿Seguro que quieres eliminar este producto?")){
+        productos.splice(index,1);
+        guardar();
+        mostrarProductos();
+    }
 }
 
 function mostrarProductos(){
@@ -292,13 +312,20 @@ function mostrarProductos(){
         totalUnidades+=p.cantidad;
         valorTotal+=total;
 
+        let filaClass = p.cantidad <= p.stockMinimo ? "stock-bajo" : "";
+
         tabla.innerHTML+=`
-        <tr>
+        <tr class="${filaClass}">
+            <td>${p.id}</td>
             <td>${p.nombre}</td>
             <td>${p.cantidad}</td>
             <td>${formatoCLP(p.precio)}</td>
             <td>${formatoCLP(total)}</td>
-            <td><button class="btn-danger" onclick="eliminarProducto(${index})">Eliminar</button></td>
+            <td>${p.fecha}</td>
+            <td>
+                <button class="btn-warning" onclick="editarProducto(${index})">Editar</button>
+                <button class="btn-danger" onclick="eliminarProducto(${index})">Eliminar</button>
+            </td>
         </tr>`;
     });
 
@@ -307,24 +334,33 @@ function mostrarProductos(){
     document.getElementById("valorTotal").innerText=formatoCLP(valorTotal);
 }
 
-/* EXPORTAR CSV */
+function filtrarProductos(){
+    const texto = buscador.value.toLowerCase();
+    const filas = document.querySelectorAll("#tablaProductos tr");
+
+    filas.forEach(fila=>{
+        fila.style.display = fila.innerText.toLowerCase().includes(texto) ? "" : "none";
+    });
+}
+
 function exportarExcel(){
     if(productos.length===0){
         alert("No hay productos para exportar");
         return;
     }
 
-    let csv="Producto,Cantidad,Precio,Total\n";
+    let fecha = new Date().toLocaleDateString();
+    let csv="Producto,Cantidad,Precio,Total,Fecha\n";
 
     productos.forEach(p=>{
-        csv+=`${p.nombre},${p.cantidad},${p.precio},${p.cantidad*p.precio}\n`;
+        csv+=`${p.nombre},${p.cantidad},${p.precio},${p.cantidad*p.precio},${p.fecha}\n`;
     });
 
     let blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
     let url=URL.createObjectURL(blob);
     let a=document.createElement("a");
     a.href=url;
-    a.download="inventario.csv";
+    a.download=`inventario_${fecha}.csv`;
     a.click();
 }
 
