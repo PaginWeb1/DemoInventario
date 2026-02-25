@@ -155,6 +155,56 @@ td{
 .stock-bajo{
     background:#fee2e2;
 }
+
+/* RESPONSIVE */
+@media (max-width:768px){
+
+    .dashboard{
+        grid-template-columns:1fr;
+    }
+
+    table, thead, tbody, th, td, tr{
+        display:block;
+        width:100%;
+    }
+
+    thead{
+        display:none;
+    }
+
+    tr{
+        background:white;
+        margin-bottom:15px;
+        border-radius:12px;
+        padding:10px;
+        box-shadow:0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    td{
+        border:none;
+        display:flex;
+        justify-content:space-between;
+        padding:8px 10px;
+        font-size:14px;
+    }
+
+    td::before{
+        content:attr(data-label);
+        font-weight:600;
+        color:#0f172a;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .btn-warning,
+    .btn-danger{
+        width:48%;
+        font-size:12px;
+        padding:8px;
+    }
+}
 </style>
 </head>
 <body>
@@ -225,6 +275,7 @@ td{
 <script>
 let productos = JSON.parse(localStorage.getItem("inventarioPro")) || [];
 
+/* LOGIN */
 function iniciarSesion(){
     const usuarioInput = document.getElementById("usuario").value.trim();
     const passwordInput = document.getElementById("password").value.trim();
@@ -251,6 +302,7 @@ if(localStorage.getItem("sesionActiva")==="true"){
     mostrarApp();
 }
 
+/* INVENTARIO */
 function guardar(){
     localStorage.setItem("inventarioPro", JSON.stringify(productos));
 }
@@ -260,12 +312,18 @@ function formatoCLP(valor){
 }
 
 function agregarProducto(){
-    const nombre = nombre.value.trim();
-    const cantidad = parseInt(cantidad.value);
-    const precio = parseFloat(precio.value);
-    const stockMinimo = parseInt(stockMinimo.value);
 
-    if(!nombre || isNaN(cantidad) || isNaN(precio)){
+    const nombreInput = document.getElementById("nombre");
+    const cantidadInput = document.getElementById("cantidad");
+    const precioInput = document.getElementById("precio");
+    const stockInput = document.getElementById("stockMinimo");
+
+    const nombre = nombreInput.value.trim();
+    const cantidad = parseInt(cantidadInput.value);
+    const precio = parseFloat(precioInput.value);
+    const stockMinimo = parseInt(stockInput.value) || 0;
+
+    if(!nombre || isNaN(cantidad) || cantidad <= 0 || isNaN(precio) || precio <= 0){
         alert("Complete los campos correctamente");
         return;
     }
@@ -280,7 +338,12 @@ function agregarProducto(){
     });
 
     guardar();
-    document.querySelectorAll(".form-grid input").forEach(i=>i.value="");
+
+    nombreInput.value="";
+    cantidadInput.value="";
+    precioInput.value="";
+    stockInput.value="";
+
     mostrarProductos();
 }
 
@@ -302,32 +365,40 @@ function eliminarProducto(index){
 }
 
 function mostrarProductos(){
+
     const tabla = document.getElementById("tablaProductos");
     tabla.innerHTML="";
     let totalUnidades=0;
     let valorTotal=0;
 
     productos.forEach((p,index)=>{
-        let total=p.cantidad*p.precio;
-        totalUnidades+=p.cantidad;
-        valorTotal+=total;
+
+        if(!p.id) p.id = Date.now() + index;
+        if(!p.fecha) p.fecha = new Date().toLocaleDateString();
+        if(!p.stockMinimo) p.stockMinimo = 0;
+
+        let total = p.cantidad * p.precio;
+        totalUnidades += p.cantidad;
+        valorTotal += total;
 
         let filaClass = p.cantidad <= p.stockMinimo ? "stock-bajo" : "";
 
         tabla.innerHTML+=`
         <tr class="${filaClass}">
-            <td>${p.id}</td>
-            <td>${p.nombre}</td>
-            <td>${p.cantidad}</td>
-            <td>${formatoCLP(p.precio)}</td>
-            <td>${formatoCLP(total)}</td>
-            <td>${p.fecha}</td>
-            <td>
+            <td data-label="ID">${p.id}</td>
+            <td data-label="Producto">${p.nombre}</td>
+            <td data-label="Cantidad">${p.cantidad}</td>
+            <td data-label="Precio">${formatoCLP(p.precio)}</td>
+            <td data-label="Total">${formatoCLP(total)}</td>
+            <td data-label="Fecha">${p.fecha}</td>
+            <td data-label="Acción">
                 <button class="btn-warning" onclick="editarProducto(${index})">Editar</button>
                 <button class="btn-danger" onclick="eliminarProducto(${index})">Eliminar</button>
             </td>
         </tr>`;
     });
+
+    guardar();
 
     document.getElementById("totalProductos").innerText=productos.length;
     document.getElementById("totalUnidades").innerText=totalUnidades;
@@ -335,7 +406,7 @@ function mostrarProductos(){
 }
 
 function filtrarProductos(){
-    const texto = buscador.value.toLowerCase();
+    const texto = document.getElementById("buscador").value.toLowerCase();
     const filas = document.querySelectorAll("#tablaProductos tr");
 
     filas.forEach(fila=>{
@@ -349,7 +420,7 @@ function exportarExcel(){
         return;
     }
 
-    let fecha = new Date().toLocaleDateString();
+    let fecha = new Date().toLocaleDateString().replaceAll("/","-");
     let csv="Producto,Cantidad,Precio,Total,Fecha\n";
 
     productos.forEach(p=>{
