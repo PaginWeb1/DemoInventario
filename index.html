@@ -16,37 +16,78 @@ body{
     color:#1e293b;
 }
 
-/* NAVBAR */
+/* LOGIN */
+.login-container{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.login-box{
+    background:white;
+    padding:40px;
+    border-radius:16px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.1);
+    width:320px;
+}
+
+.login-box h2{
+    margin-bottom:20px;
+    text-align:center;
+}
+
+.login-box input{
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+.login-box button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:#2563eb;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+}
+
+/* APP */
+#app{
+    display:none;
+}
+
 header{
     background:#0f172a;
     color:white;
-    padding:18px 20px;
+    padding:15px 20px;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    flex-wrap:wrap;
 }
 
-header h1{
-    font-size:16px;
+header button{
+    background:#ef4444;
+    color:white;
+    border:none;
+    padding:8px 12px;
+    border-radius:8px;
+    cursor:pointer;
 }
 
-header span{
-    font-size:12px;
-    opacity:0.7;
-}
-
-/* CONTAINER */
 .container{
     max-width:1200px;
     margin:25px auto;
     padding:0 15px;
 }
 
-/* DASHBOARD */
 .dashboard{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
     gap:15px;
     margin-bottom:25px;
 }
@@ -56,59 +97,32 @@ header span{
     padding:20px;
     border-radius:14px;
     box-shadow:0 8px 20px rgba(0,0,0,0.05);
-    transition:0.3s;
-}
-
-.card:hover{
-    transform:translateY(-5px);
-}
-
-.card h3{
-    font-size:13px;
-    color:#64748b;
 }
 
 .card p{
     font-size:22px;
     font-weight:700;
-    margin-top:8px;
-}
-
-/* FORM */
-.form-section{
-    background:white;
-    padding:20px;
-    border-radius:14px;
-    box-shadow:0 8px 20px rgba(0,0,0,0.05);
-    margin-bottom:25px;
 }
 
 .form-grid{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
     gap:10px;
+    margin-bottom:15px;
 }
 
 input{
-    padding:14px;
-    border-radius:10px;
-    border:1px solid #e2e8f0;
-    font-size:14px;
-}
-
-input:focus{
-    outline:none;
-    border-color:#2563eb;
-    box-shadow:0 0 0 3px rgba(37,99,235,0.15);
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #ccc;
 }
 
 button{
-    padding:14px;
+    padding:12px;
     border:none;
-    border-radius:10px;
+    border-radius:8px;
     font-weight:600;
     cursor:pointer;
-    transition:0.3s;
 }
 
 .btn-primary{
@@ -116,8 +130,9 @@ button{
     color:white;
 }
 
-.btn-primary:active{
-    transform:scale(0.97);
+.btn-success{
+    background:#16a34a;
+    color:white;
 }
 
 .btn-danger{
@@ -125,12 +140,6 @@ button{
     color:white;
 }
 
-/* SEARCH */
-.search-box{
-    margin-bottom:15px;
-}
-
-/* TABLE */
 .table-container{
     background:white;
     border-radius:14px;
@@ -146,59 +155,36 @@ table{
 th{
     background:#0f172a;
     color:white;
-    padding:14px;
-    font-size:12px;
+    padding:12px;
     text-align:left;
 }
 
 td{
-    padding:14px;
-    border-bottom:1px solid #f1f5f9;
-    font-size:13px;
+    padding:12px;
+    border-bottom:1px solid #eee;
 }
 
-tr:hover{
-    background:#f8fafc;
-}
-
-/* MOBILE OPTIMIZATION */
+/* MOBILE */
 @media(max-width:768px){
-
-    .dashboard{
-        grid-template-columns:1fr;
-    }
-
-    .form-grid{
-        grid-template-columns:1fr;
-    }
-
     table, thead, tbody, th, td, tr{
         display:block;
     }
 
-    thead{
-        display:none;
-    }
+    thead{display:none;}
 
     tr{
-        background:white;
         margin-bottom:15px;
-        padding:15px;
-        border-radius:12px;
-        box-shadow:0 5px 15px rgba(0,0,0,0.05);
+        padding:10px;
+        border-bottom:1px solid #ccc;
     }
 
     td{
-        border:none;
-        padding:8px 0;
         display:flex;
         justify-content:space-between;
-        font-size:14px;
     }
 
     td:before{
         font-weight:600;
-        color:#64748b;
     }
 
     td:nth-child(1):before{content:"Producto";}
@@ -207,76 +193,98 @@ tr:hover{
     td:nth-child(4):before{content:"Total";}
     td:nth-child(5):before{content:"Acción";}
 }
-
-footer{
-    text-align:center;
-    padding:20px;
-    font-size:12px;
-    color:#64748b;
-    margin-top:30px;
-}
 </style>
 </head>
 <body>
 
+<!-- LOGIN -->
+<div class="login-container" id="login">
+    <div class="login-box">
+        <h2>Inventario Pro</h2>
+        <input type="text" id="usuario" placeholder="Usuario">
+        <input type="password" id="password" placeholder="Contraseña">
+        <button onclick="iniciarSesion()">Ingresar</button>
+    </div>
+</div>
+
+<!-- APP -->
+<div id="app">
 <header>
-    <h1>Inventario Pro</h1>
-    <span>Demo Comercial - Sistema Escalable</span>
+    <div>Inventario Pro</div>
+    <button onclick="cerrarSesion()">Cerrar Sesión</button>
 </header>
 
 <div class="container">
 
 <div class="dashboard">
     <div class="card">
-        <h3>Total Productos</h3>
+        <div>Total Productos</div>
         <p id="totalProductos">0</p>
     </div>
     <div class="card">
-        <h3>Total Unidades</h3>
+        <div>Total Unidades</div>
         <p id="totalUnidades">0</p>
     </div>
     <div class="card">
-        <h3>Valor Total Inventario</h3>
+        <div>Valor Total</div>
         <p id="valorTotal">$0</p>
     </div>
 </div>
 
-<div class="form-section">
-    <div class="form-grid">
-        <input type="text" id="nombre" placeholder="Nombre del producto">
-        <input type="number" id="cantidad" placeholder="Cantidad">
-        <input type="number" id="precio" placeholder="Precio unitario">
-        <button class="btn-primary" onclick="agregarProducto()">Agregar</button>
-    </div>
-</div>
-
-<div class="search-box">
-    <input type="text" id="busqueda" placeholder="Buscar producto..." onkeyup="mostrarProductos()">
+<div class="form-grid">
+    <input type="text" id="nombre" placeholder="Producto">
+    <input type="number" id="cantidad" placeholder="Cantidad">
+    <input type="number" id="precio" placeholder="Precio">
+    <button class="btn-primary" onclick="agregarProducto()">Agregar</button>
+    <button class="btn-success" onclick="exportarExcel()">Exportar Excel</button>
 </div>
 
 <div class="table-container">
 <table>
-    <thead>
-        <tr>
-            <th>Producto</th>
-            <th>Cantidad</th>
-            <th>Precio</th>
-            <th>Total</th>
-            <th>Acción</th>
-        </tr>
-    </thead>
-    <tbody id="tablaProductos"></tbody>
+<thead>
+<tr>
+<th>Producto</th>
+<th>Cantidad</th>
+<th>Precio</th>
+<th>Total</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody id="tablaProductos"></tbody>
 </table>
 </div>
 
 </div>
-
-<footer>
-© 2026 Inventario Pro | Sistema listo para comercialización
-</footer>
+</div>
 
 <script>
 let productos = JSON.parse(localStorage.getItem("inventarioPro")) || [];
+
+function iniciarSesion(){
+    const usuario = document.getElementById("usuario").value;
+    const password = document.getElementById("password").value;
+
+    if(usuario==="admin" && password==="1234"){
+        localStorage.setItem("sesionActiva","true");
+        mostrarApp();
+    }else{
+        alert("Credenciales incorrectas");
+    }
+}
+
+function cerrarSesion(){
+    localStorage.removeItem("sesionActiva");
+    location.reload();
+}
+
+function mostrarApp(){
+    document.getElementById("login").style.display="none";
+    document.getElementById("app").style.display="block";
+}
+
+if(localStorage.getItem("sesionActiva")==="true"){
+    mostrarApp();
+}
 
 function guardar(){
     localStorage.setItem("inventarioPro", JSON.stringify(productos));
@@ -292,7 +300,7 @@ function agregarProducto(){
     const precio = parseFloat(document.getElementById("precio").value);
 
     if(!nombre || cantidad<=0 || precio<=0){
-        alert("Complete correctamente los campos");
+        alert("Complete los campos correctamente");
         return;
     }
 
@@ -310,27 +318,23 @@ function eliminarProducto(index){
 
 function mostrarProductos(){
     const tabla = document.getElementById("tablaProductos");
-    const filtro = document.getElementById("busqueda").value.toLowerCase();
     tabla.innerHTML="";
-
     let totalUnidades=0;
     let valorTotal=0;
 
     productos.forEach((p,index)=>{
-        if(p.nombre.toLowerCase().includes(filtro)){
-            let total=p.cantidad*p.precio;
-            totalUnidades+=p.cantidad;
-            valorTotal+=total;
+        let total=p.cantidad*p.precio;
+        totalUnidades+=p.cantidad;
+        valorTotal+=total;
 
-            tabla.innerHTML+=`
-            <tr>
-                <td>${p.nombre}</td>
-                <td>${p.cantidad}</td>
-                <td>${formatoCLP(p.precio)}</td>
-                <td>${formatoCLP(total)}</td>
-                <td><button class="btn-danger" onclick="eliminarProducto(${index})">Eliminar</button></td>
-            </tr>`;
-        }
+        tabla.innerHTML+=`
+        <tr>
+            <td>${p.nombre}</td>
+            <td>${p.cantidad}</td>
+            <td>${formatoCLP(p.precio)}</td>
+            <td>${formatoCLP(total)}</td>
+            <td><button class="btn-danger" onclick="eliminarProducto(${index})">Eliminar</button></td>
+        </tr>`;
     });
 
     document.getElementById("totalProductos").innerText=productos.length;
@@ -339,9 +343,24 @@ function mostrarProductos(){
 }
 
 function limpiar(){
-    document.getElementById("nombre").value="";
-    document.getElementById("cantidad").value="";
-    document.getElementById("precio").value="";
+    nombre.value="";
+    cantidad.value="";
+    precio.value="";
+}
+
+/* EXPORTAR CSV (Excel) */
+function exportarExcel(){
+    let csv="Producto,Cantidad,Precio,Total\n";
+    productos.forEach(p=>{
+        csv+=${p.nombre},${p.cantidad},${p.precio},${p.cantidad*p.precio}\n;
+    });
+
+    let blob=new Blob([csv],{type:"text/csv"});
+    let url=URL.createObjectURL(blob);
+    let a=document.createElement("a");
+    a.href=url;
+    a.download="inventario.csv";
+    a.click();
 }
 
 mostrarProductos();
