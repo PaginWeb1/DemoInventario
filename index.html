@@ -3,33 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inventario Pro - Demo Comercial</title>
+<title>Inventario Pro | Sistema Comercial</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
+*{box-sizing:border-box;margin:0;padding:0}
+
 body{
-    margin:0;
-    font-family: 'Segoe UI', sans-serif;
-    background: #f4f6f9;
+    font-family:'Inter',sans-serif;
+    background:#f1f5f9;
+    color:#1e293b;
 }
 
+/* NAVBAR */
 header{
-    background:#111827;
+    background:#0f172a;
     color:white;
-    padding:20px;
-    text-align:center;
-    font-size:22px;
-    font-weight:bold;
+    padding:18px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
 }
 
+header h1{
+    font-size:16px;
+}
+
+header span{
+    font-size:12px;
+    opacity:0.7;
+}
+
+/* CONTAINER */
 .container{
-    padding:20px;
     max-width:1200px;
-    margin:auto;
+    margin:25px auto;
+    padding:0 15px;
 }
 
+/* DASHBOARD */
 .dashboard{
     display:grid;
-    grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
     gap:15px;
     margin-bottom:25px;
 }
@@ -37,44 +54,61 @@ header{
 .card{
     background:white;
     padding:20px;
-    border-radius:12px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    border-radius:14px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.05);
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
 }
 
 .card h3{
-    margin:0;
-    font-size:14px;
-    color:#555;
+    font-size:13px;
+    color:#64748b;
 }
 
 .card p{
     font-size:22px;
-    font-weight:bold;
-    margin-top:10px;
+    font-weight:700;
+    margin-top:8px;
 }
 
+/* FORM */
 .form-section{
     background:white;
     padding:20px;
-    border-radius:12px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.08);
-    margin-bottom:20px;
+    border-radius:14px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.05);
+    margin-bottom:25px;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:10px;
 }
 
 input{
-    padding:10px;
-    margin:5px 0;
-    width:100%;
-    border-radius:8px;
-    border:1px solid #ccc;
+    padding:14px;
+    border-radius:10px;
+    border:1px solid #e2e8f0;
+    font-size:14px;
+}
+
+input:focus{
+    outline:none;
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,0.15);
 }
 
 button{
-    padding:10px 15px;
+    padding:14px;
     border:none;
-    border-radius:8px;
+    border-radius:10px;
+    font-weight:600;
     cursor:pointer;
-    font-weight:bold;
+    transition:0.3s;
 }
 
 .btn-primary{
@@ -82,39 +116,103 @@ button{
     color:white;
 }
 
+.btn-primary:active{
+    transform:scale(0.97);
+}
+
 .btn-danger{
-    background:#dc2626;
+    background:#ef4444;
     color:white;
+}
+
+/* SEARCH */
+.search-box{
+    margin-bottom:15px;
+}
+
+/* TABLE */
+.table-container{
+    background:white;
+    border-radius:14px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.05);
+    overflow:hidden;
 }
 
 table{
     width:100%;
     border-collapse:collapse;
-    background:white;
-    border-radius:12px;
-    overflow:hidden;
-    box-shadow:0 4px 12px rgba(0,0,0,0.08);
-}
-
-th,td{
-    padding:12px;
-    text-align:left;
 }
 
 th{
-    background:#111827;
+    background:#0f172a;
     color:white;
+    padding:14px;
+    font-size:12px;
+    text-align:left;
 }
 
-tr:nth-child(even){
-    background:#f2f2f2;
+td{
+    padding:14px;
+    border-bottom:1px solid #f1f5f9;
+    font-size:13px;
+}
+
+tr:hover{
+    background:#f8fafc;
+}
+
+/* MOBILE OPTIMIZATION */
+@media(max-width:768px){
+
+    .dashboard{
+        grid-template-columns:1fr;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    table, thead, tbody, th, td, tr{
+        display:block;
+    }
+
+    thead{
+        display:none;
+    }
+
+    tr{
+        background:white;
+        margin-bottom:15px;
+        padding:15px;
+        border-radius:12px;
+        box-shadow:0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    td{
+        border:none;
+        padding:8px 0;
+        display:flex;
+        justify-content:space-between;
+        font-size:14px;
+    }
+
+    td:before{
+        font-weight:600;
+        color:#64748b;
+    }
+
+    td:nth-child(1):before{content:"Producto";}
+    td:nth-child(2):before{content:"Cantidad";}
+    td:nth-child(3):before{content:"Precio";}
+    td:nth-child(4):before{content:"Total";}
+    td:nth-child(5):before{content:"Acción";}
 }
 
 footer{
     text-align:center;
-    padding:15px;
+    padding:20px;
     font-size:12px;
-    color:#777;
+    color:#64748b;
     margin-top:30px;
 }
 </style>
@@ -122,7 +220,8 @@ footer{
 <body>
 
 <header>
-Sistema de Inventario Pro - Demo Comercial
+    <h1>Inventario Pro</h1>
+    <span>Demo Comercial - Sistema Escalable</span>
 </header>
 
 <div class="container">
@@ -137,19 +236,25 @@ Sistema de Inventario Pro - Demo Comercial
         <p id="totalUnidades">0</p>
     </div>
     <div class="card">
-        <h3>Valor Inventario</h3>
+        <h3>Valor Total Inventario</h3>
         <p id="valorTotal">$0</p>
     </div>
 </div>
 
 <div class="form-section">
-    <h3>Agregar Producto</h3>
-    <input type="text" id="nombre" placeholder="Nombre del producto">
-    <input type="number" id="cantidad" placeholder="Cantidad">
-    <input type="number" id="precio" placeholder="Precio unitario">
-    <button class="btn-primary" onclick="agregarProducto()">Agregar Producto</button>
+    <div class="form-grid">
+        <input type="text" id="nombre" placeholder="Nombre del producto">
+        <input type="number" id="cantidad" placeholder="Cantidad">
+        <input type="number" id="precio" placeholder="Precio unitario">
+        <button class="btn-primary" onclick="agregarProducto()">Agregar</button>
+    </div>
 </div>
 
+<div class="search-box">
+    <input type="text" id="busqueda" placeholder="Buscar producto..." onkeyup="mostrarProductos()">
+</div>
+
+<div class="table-container">
 <table>
     <thead>
         <tr>
@@ -162,11 +267,12 @@ Sistema de Inventario Pro - Demo Comercial
     </thead>
     <tbody id="tablaProductos"></tbody>
 </table>
+</div>
 
 </div>
 
 <footer>
-Demo desarrollado para comercialización | Sistema escalable
+© 2026 Inventario Pro | Sistema listo para comercialización
 </footer>
 
 <script>
@@ -176,17 +282,21 @@ function guardar(){
     localStorage.setItem("inventarioPro", JSON.stringify(productos));
 }
 
+function formatoCLP(valor){
+    return valor.toLocaleString("es-CL",{style:"currency",currency:"CLP"});
+}
+
 function agregarProducto(){
     const nombre = document.getElementById("nombre").value.trim();
     const cantidad = parseInt(document.getElementById("cantidad").value);
     const precio = parseFloat(document.getElementById("precio").value);
 
-    if(!nombre || cantidad <=0 || precio <=0){
+    if(!nombre || cantidad<=0 || precio<=0){
         alert("Complete correctamente los campos");
         return;
     }
 
-    productos.push({nombre, cantidad, precio});
+    productos.push({nombre,cantidad,precio});
     guardar();
     limpiar();
     mostrarProductos();
@@ -200,30 +310,32 @@ function eliminarProducto(index){
 
 function mostrarProductos(){
     const tabla = document.getElementById("tablaProductos");
-    tabla.innerHTML = "";
+    const filtro = document.getElementById("busqueda").value.toLowerCase();
+    tabla.innerHTML="";
 
-    let totalUnidades = 0;
-    let valorTotal = 0;
+    let totalUnidades=0;
+    let valorTotal=0;
 
     productos.forEach((p,index)=>{
-        let total = p.cantidad * p.precio;
-        totalUnidades += p.cantidad;
-        valorTotal += total;
+        if(p.nombre.toLowerCase().includes(filtro)){
+            let total=p.cantidad*p.precio;
+            totalUnidades+=p.cantidad;
+            valorTotal+=total;
 
-        tabla.innerHTML += `
+            tabla.innerHTML+=`
             <tr>
                 <td>${p.nombre}</td>
                 <td>${p.cantidad}</td>
-                <td>$${p.precio}</td>
-                <td>$${total}</td>
+                <td>${formatoCLP(p.precio)}</td>
+                <td>${formatoCLP(total)}</td>
                 <td><button class="btn-danger" onclick="eliminarProducto(${index})">Eliminar</button></td>
-            </tr>
-        `;
+            </tr>`;
+        }
     });
 
-    document.getElementById("totalProductos").innerText = productos.length;
-    document.getElementById("totalUnidades").innerText = totalUnidades;
-    document.getElementById("valorTotal").innerText = "$" + valorTotal;
+    document.getElementById("totalProductos").innerText=productos.length;
+    document.getElementById("totalUnidades").innerText=totalUnidades;
+    document.getElementById("valorTotal").innerText=formatoCLP(valorTotal);
 }
 
 function limpiar(){
